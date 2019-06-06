@@ -2,6 +2,7 @@ const fs = require('fs');
 const TeleBot = require('telebot');
 var Inotify = require('inotify').Inotify;
 var inotify = new Inotify();
+const publicIp = require('public-ip');
 
 var data = fs.readFileSync ('secrets.json', 'utf8');
 token = JSON.parse(data)['telegram_token'];
@@ -42,4 +43,20 @@ inotify.addWatch({
 
 bot.start();
 
-//bot.sendMessage
+// Startup message
+
+publicIp.v4().then(puip => {
+
+    var Ip = require("ip");
+    var prip = Ip.address();
+    bot.getMe().then(user => {
+        data = 'Good morning from ' + user.first_name+ '.\nPublic IP is ' + puip + '\nAnd private ip is ' + prip;
+
+        for (chidid in Object.keys(chats)) {
+            chid = Object.keys(chats)[chidid];
+            bot.sendMessage(chid, data);
+            console.log('Sent ' + data + ' to chat id ' + chid);
+        }
+    });
+});
+

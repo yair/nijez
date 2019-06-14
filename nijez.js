@@ -3,6 +3,10 @@ const TeleBot = require('telebot');
 var Inotify = require('inotify').Inotify;
 var inotify = new Inotify();
 const publicIp = require('public-ip');
+//const wifi = require('node-wifi');
+var shell = require('shelljs');
+
+process.title = 'nijez';
 
 var data = fs.readFileSync ('secrets.json', 'utf8');
 token = JSON.parse(data)['telegram_token'];
@@ -50,7 +54,10 @@ publicIp.v4().then(puip => {
     var Ip = require("ip");
     var prip = Ip.address();
     bot.getMe().then(user => {
-        data = 'Good morning from ' + user.first_name+ '.\nPublic IP is ' + puip + '\nAnd private ip is ' + prip;
+    regex = /ESSID.*/;
+    essid = shell.exec('/sbin/iwconfig wlp6s0 |/usr/bin/head -1', {silent:true}).stdout.match(regex);
+
+        data = 'Good morning from ' + user.first_name+ '.\nPublic IP is ' + puip + '\nAnd private ip is ' + prip + '\n' + essid;
 
         for (chidid in Object.keys(chats)) {
             chid = Object.keys(chats)[chidid];
